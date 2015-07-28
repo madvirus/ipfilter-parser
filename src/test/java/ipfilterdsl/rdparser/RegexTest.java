@@ -25,9 +25,9 @@ public class RegexTest {
     public void twoTokens() throws Exception {
         Lexer lexer = new Lexer("allowToken 1.2.3.4");
         TokenBuffer tokenBuffer = lexer.tokenize();
-        assertThat(tokenBuffer.nextToken(), equalTo(new Token(TokenType.TT_ALLOW, "allowToken")));
-        assertThat(tokenBuffer.nextToken(), equalTo(new Token(TokenType.TT_IPRANGE, "1.2.3.4")));
-        assertThat(tokenBuffer.nextToken(), equalTo(new Token(TokenType.TT_EOF, null)));
+        assertThat(tokenBuffer.currentTokenAndMoveNext(), equalTo(new Token(TokenType.TT_ALLOW, "allowToken")));
+        assertThat(tokenBuffer.currentTokenAndMoveNext(), equalTo(new Token(TokenType.TT_IPRANGE, "1.2.3.4")));
+        assertThat(tokenBuffer.currentTokenAndMoveNext(), equalTo(new Token(TokenType.TT_EOF, null)));
         assertThat(tokenBuffer.hasNext(), equalTo(false));
     }
 

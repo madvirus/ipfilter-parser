@@ -34,10 +34,10 @@ public class ChoiceParserTest {
                         terminalParser(TokenType.TT_IPRANGE)
                 ), null);
         TokenBuffer tokenBuffer = tokenBuffer(commaToken());
-        int oriPosition = tokenBuffer.getCurrentPosition();
+        int oriPosition = tokenBuffer.currentPosition();
         ParseResult result = parser.parse(tokenBuffer);
         assertThat(result.isSuccess(), equalTo(false));
-        assertThat(tokenBuffer.getCurrentPosition(), equalTo(oriPosition));
+        assertThat(tokenBuffer.currentPosition(), equalTo(oriPosition));
     }
 
     @Test

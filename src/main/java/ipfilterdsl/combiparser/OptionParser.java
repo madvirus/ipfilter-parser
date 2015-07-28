@@ -23,14 +23,14 @@ public class OptionParser extends Parser {
 
     @Override
     public ParseResult parse(TokenBuffer tokenBuffer) {
-        int pos = tokenBuffer.getCurrentPosition();
+        int pos = tokenBuffer.currentPosition();
         ParseResult result = parser.parse(tokenBuffer);
         if (result.isSuccess()) {
             action(Arrays.asList(result.getValue()));
         } else {
             tokenBuffer.resetPosition(pos);
         }
-        return ParseResult.success();
+        return ParseResult.success(tokenBuffer);
     }
 
 }

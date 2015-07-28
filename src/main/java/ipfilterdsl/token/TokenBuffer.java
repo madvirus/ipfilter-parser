@@ -4,25 +4,29 @@ import java.util.List;
 
 public class TokenBuffer {
     private List<Token> tokenList;
-    private int currentPosition = -1;
+    private int currentPosition = 0;
 
     public TokenBuffer(List<Token> tokenList) {
         this.tokenList = tokenList;
-    }
-
-    public Token nextToken() {
-        return tokenList.get(++currentPosition);
     }
 
     public Token currentToken() {
         return tokenList.get(currentPosition);
     }
 
+    public Token currentTokenAndMoveNext() {
+        return tokenList.get(currentPosition++);
+    }
+
     public boolean hasNext() {
         return currentPosition < tokenList.size() - 1;
     }
 
-    public int getCurrentPosition() {
+    public boolean hasCurrent() {
+        return currentPosition < tokenList.size();
+    }
+
+    public int currentPosition() {
         return currentPosition;
     }
 
@@ -32,5 +36,9 @@ public class TokenBuffer {
 
     public void movePrevious() {
         currentPosition--;
+    }
+
+    public void moveNext() {
+        currentPosition++;
     }
 }

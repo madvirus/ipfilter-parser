@@ -37,14 +37,12 @@ public class Lexer {
     }
 
     private boolean matchToken() {
-        System.out.println("code = " + code);
         boolean match = false;
         Iterator<TokenTypePattern> patterIter = typePattern.iterator();
         while (!match && patterIter.hasNext()) {
             TokenTypePattern ttPattern = patterIter.next();
             Matcher matcher = ttPattern.pattern.matcher(code);
             if (matcher.find()) {
-                System.out.println("--> match : " + ttPattern.type.name());
                 if (ttPattern.type.isOutputIncluded()) {
                     tokenList.add(new Token(ttPattern.type, matcher.group()));
                 }

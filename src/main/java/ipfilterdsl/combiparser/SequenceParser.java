@@ -26,7 +26,7 @@ public class SequenceParser extends Parser {
 
     @Override
     public ParseResult parse(TokenBuffer tokenBuffer) {
-        int pos = tokenBuffer.getCurrentPosition();
+        int pos = tokenBuffer.currentPosition();
         Iterator<Parser> parserIter = parserList.iterator();
         Parser firstParser = parserIter.next();
         ParseResult lastResult = firstParser.parse(tokenBuffer);
@@ -42,10 +42,10 @@ public class SequenceParser extends Parser {
                 }
             }
             action(values);
-            return new ParseResult(true, "");
+            return new ParseResult(true, "", tokenBuffer);
         } else {
             tokenBuffer.resetPosition(pos);
-            return new ParseResult(false, "");
+            return new ParseResult(false, "", tokenBuffer);
         }
     }
 }

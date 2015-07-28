@@ -22,12 +22,12 @@ public class TerminalParser extends Parser {
 
     @Override
     public ParseResult parse(TokenBuffer tokenBuffer) {
-        Token token = tokenBuffer.nextToken();
+        Token token = tokenBuffer.currentToken();
         if (token.getType() == type) {
-            return new ParseResult(true, token.getValue());
+            tokenBuffer.moveNext();
+            return new ParseResult(true, token.getValue(), tokenBuffer);
         } else {
-            tokenBuffer.movePrevious();
-            return new ParseResult(false, "");
+            return new ParseResult(false, "", tokenBuffer);
         }
     }
 }

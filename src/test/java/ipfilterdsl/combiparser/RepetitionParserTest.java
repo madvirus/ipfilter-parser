@@ -78,7 +78,7 @@ public class RepetitionParserTest {
             assertThat(values.get(i), equalTo(ipRanges[i]));
         }
         assertThat(tokenBuffer.hasNext(), equalTo(true));
-        assertThat(tokenBuffer.nextToken().getType(), equalTo(TokenType.TT_DENY));
+        assertThat(tokenBuffer.currentTokenAndMoveNext().getType(), equalTo(TokenType.TT_DENY));
     }
 
 }

@@ -74,7 +74,7 @@ public class IpFilterParser {
     }
 
     private boolean parse(Supplier<Boolean> parsing) {
-        int save = tokenBuffer.getCurrentPosition();
+        int save = tokenBuffer.currentPosition();
         boolean parseSuccess = parsing.get();
         if (!parseSuccess) {
             tokenBuffer.resetPosition(save);
@@ -84,8 +84,8 @@ public class IpFilterParser {
 
     private boolean allowDeclLambda() {
         // allowDecl : ALLOW iprange;
-        if (tokenBuffer.nextToken().getType() == TokenType.TT_ALLOW) {
-            Token token = tokenBuffer.nextToken();
+        if (tokenBuffer.currentTokenAndMoveNext().getType() == TokenType.TT_ALLOW) {
+            Token token = tokenBuffer.currentTokenAndMoveNext();
             if (token.getType() == TokenType.TT_IPRANGE) {
                 allowIpRanges.add(new IpRange(token.getValue()));
                 return true;
@@ -98,10 +98,10 @@ public class IpFilterParser {
 
     private boolean allowDecl() {
         // allowDecl : ALLOW iprange;
-        int save = tokenBuffer.getCurrentPosition();
+        int save = tokenBuffer.currentPosition();
         boolean parseSuccess = false;
-        if (tokenBuffer.nextToken().getType() == TokenType.TT_ALLOW) {
-            Token token = tokenBuffer.nextToken();
+        if (tokenBuffer.currentTokenAndMoveNext().getType() == TokenType.TT_ALLOW) {
+            Token token = tokenBuffer.currentTokenAndMoveNext();
             if (token.getType() == TokenType.TT_IPRANGE) {
                 allowIpRanges.add(new IpRange(token.getValue()));
                 parseSuccess = true;
@@ -117,10 +117,10 @@ public class IpFilterParser {
 
     private boolean denyDecl() {
         // denyDecl : DENY iprange;
-        int save = tokenBuffer.getCurrentPosition();
+        int save = tokenBuffer.currentPosition();
         boolean parseSuccess = false;
-        if (tokenBuffer.nextToken().getType() == TokenType.TT_DENY) {
-            Token token = tokenBuffer.nextToken();
+        if (tokenBuffer.currentTokenAndMoveNext().getType() == TokenType.TT_DENY) {
+            Token token = tokenBuffer.currentTokenAndMoveNext();
             if (token.getType() == TokenType.TT_IPRANGE) {
                 denyIpRanges.add(new IpRange(token.getValue()));
                 parseSuccess = true;
@@ -136,9 +136,9 @@ public class IpFilterParser {
 
     private boolean optionalOrderDecl() {
         // orderDecl : ORDER allowDeny | denyAllow;
-        int save = tokenBuffer.getCurrentPosition();
+        int save = tokenBuffer.currentPosition();
         boolean parseSuccess = false;
-        Token token = tokenBuffer.nextToken();
+        Token token = tokenBuffer.currentTokenAndMoveNext();
         if (token.getType() == TokenType.TT_ORDER) {
             if (allowDeny()) {
                 parseSuccess = true;
@@ -155,14 +155,14 @@ public class IpFilterParser {
     }
 
     private boolean allowDeny() {
-        int save = tokenBuffer.getCurrentPosition();
+        int save = tokenBuffer.currentPosition();
         boolean parseSuccess = false;
 
-        Token order1 = tokenBuffer.nextToken();
+        Token order1 = tokenBuffer.currentTokenAndMoveNext();
         if (order1.getType() == TokenType.TT_ALLOW) {
-            Token token = tokenBuffer.nextToken();
+            Token token = tokenBuffer.currentTokenAndMoveNext();
             if (token.getType() == TokenType.TT_COMMA) {
-                Token order2 = tokenBuffer.nextToken();
+                Token order2 = tokenBuffer.currentTokenAndMoveNext();
                 if (order2.getType() == TokenType.TT_DENY) {
                     parseSuccess = true;
                     allowFirst = true;
@@ -176,14 +176,14 @@ public class IpFilterParser {
     }
 
     private boolean denyAllow() {
-        int save = tokenBuffer.getCurrentPosition();
+        int save = tokenBuffer.currentPosition();
         boolean parseSuccess = false;
 
-        Token order1 = tokenBuffer.nextToken();
+        Token order1 = tokenBuffer.currentTokenAndMoveNext();
         if (order1.getType() == TokenType.TT_DENY) {
-            Token token = tokenBuffer.nextToken();
+            Token token = tokenBuffer.currentTokenAndMoveNext();
             if (token.getType() == TokenType.TT_COMMA) {
-                Token order2 = tokenBuffer.nextToken();
+                Token order2 = tokenBuffer.currentTokenAndMoveNext();
                 if (order2.getType() == TokenType.TT_ALLOW) {
                     parseSuccess = true;
                     allowFirst = false;

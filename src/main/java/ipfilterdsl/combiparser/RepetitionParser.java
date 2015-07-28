@@ -31,7 +31,7 @@ public class RepetitionParser extends Parser {
             values.add(lastResult.getValue());
         }
         if (oneOrMore && !lastResult.isSuccess()) {
-            return ParseResult.fail();
+            return ParseResult.fail(tokenBuffer);
         }
         while (lastResult.isSuccess()) {
             lastResult = parser.parse(tokenBuffer);
@@ -42,6 +42,6 @@ public class RepetitionParser extends Parser {
         if (!values.isEmpty()) {
             action(values);
         }
-        return ParseResult.success();
+        return ParseResult.success(tokenBuffer);
     }
 }

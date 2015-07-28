@@ -64,7 +64,7 @@ class IpFilterCombiParser {
         try {
             ParseResult result = configParser.parse(tokenBuffer);
             if (result.isSuccess()) {
-                if (tokenBuffer.nextToken().getType() == TokenType.TT_EOF) {
+                if (tokenBuffer.currentTokenAndMoveNext().getType() == TokenType.TT_EOF) {
                     createResult();
                 } else {
                     throw new MatchingTokenNotFoundException();

@@ -35,8 +35,9 @@ public class LexerTest {
         Lexer lexer = new Lexer(code);
         TokenBuffer tokenBuffer = lexer.tokenize();
         for (Token token : expectedTokens) {
-            assertThat(tokenBuffer.nextToken(), equalTo(token));
+            assertThat(tokenBuffer.currentTokenAndMoveNext(), equalTo(token));
         }
+        assertThat(tokenBuffer.hasCurrent(), equalTo(false));
         assertThat(tokenBuffer.hasNext(), equalTo(false));
     }
 

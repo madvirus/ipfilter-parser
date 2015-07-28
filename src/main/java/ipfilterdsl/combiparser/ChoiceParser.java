@@ -24,7 +24,7 @@ public class ChoiceParser extends Parser {
 
     @Override
     public ParseResult parse(TokenBuffer tokenBuffer) {
-        int pos = tokenBuffer.getCurrentPosition();
+        int pos = tokenBuffer.currentPosition();
         ParseResult lastResult;
         Iterator<Parser> parserIter = parsers.iterator();
         do {
@@ -35,10 +35,10 @@ public class ChoiceParser extends Parser {
             }
         } while (parserIter.hasNext() && !lastResult.isSuccess());
         if (lastResult.isSuccess()) {
-            return ParseResult.success();
+            return ParseResult.success(tokenBuffer);
         } else {
             tokenBuffer.resetPosition(pos);
-            return ParseResult.fail();
+            return ParseResult.fail(tokenBuffer);
         }
     }
 }
