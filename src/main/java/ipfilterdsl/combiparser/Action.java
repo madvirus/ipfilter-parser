@@ -1,5 +1,5 @@
 package ipfilterdsl.combiparser;
 
-public interface Action<I, O> {
-    O tranform(I input);
+public interface Action<I, R> {
+    R tranform(I input);
 }

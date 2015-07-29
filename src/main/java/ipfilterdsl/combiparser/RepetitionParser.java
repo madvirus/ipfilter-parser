@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class RepetitionParser extends Parser {
+public class RepetitionParser<I,R,T> extends Parser<List<R>,T> {
     private final boolean oneOrMore;
-    private Parser parser;
+    private Parser<I,R> parser;
 
-    public RepetitionParser(boolean oneOrMore, Parser parser, Consumer<List<String>> actionFunc) {
-        super(actionFunc);
+    public RepetitionParser(boolean oneOrMore, Parser parser, Action<List<R>, T> action) {
+        super(action);
         if (parser == null) {
             throw new IllegalArgumentException("no parser");
         }
@@ -19,19 +19,15 @@ public class RepetitionParser extends Parser {
         this.parser = parser;
     }
 
-    public RepetitionParser(boolean oneOrMore, Parser parser) {
-        this(oneOrMore, parser, null);
-    }
-
     @Override
-    public ParseResult parse(TokenBuffer tokenBuffer) {
-        List<String> values = new ArrayList<>();
-        ParseResult lastResult = parser.parse(tokenBuffer);
+    public ParseResult<T> parse(TokenBuffer tokenBuffer) {
+        List<R> values = new ArrayList<>();
+        ParseResult<R> lastResult = parser.parse(tokenBuffer);
         if (lastResult.isSuccess()) {
             values.add(lastResult.getValue());
         }
         if (oneOrMore && !lastResult.isSuccess()) {
-            return ParseResult.fail(tokenBuffer);
+            return new ParseResult<>(false, null, tokenBuffer);
         }
         while (lastResult.isSuccess()) {
             lastResult = parser.parse(tokenBuffer);
@@ -39,9 +35,7 @@ public class RepetitionParser extends Parser {
                 values.add(lastResult.getValue());
             }
         }
-        if (!values.isEmpty()) {
-            action(values);
-        }
-        return ParseResult.success(tokenBuffer);
+        T ret = action(values);
+        return new ParseResult(true, ret, tokenBuffer);
     }
 }

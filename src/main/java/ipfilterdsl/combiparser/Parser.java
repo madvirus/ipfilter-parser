@@ -6,21 +6,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public abstract class Parser {
+public abstract class Parser<I,R> {
 
-    private Optional<Consumer<List<String>>> actionFuncOpt = null;
+    private Action<I,R> action = null;
 
-    public Parser(Consumer<List<String>> actionFunc) {
-        this.actionFuncOpt = Optional.ofNullable(actionFunc);
-    }
-    public Parser() {
-        this.actionFuncOpt = Optional.empty();
+    public Parser(Action<I,R> actionFunc) {
+        this.action = actionFunc;
     }
 
     public abstract ParseResult parse(TokenBuffer tokenBuffer);
 
-    public void action(List<String> results) {
-        actionFuncOpt.ifPresent(actionFunc -> actionFunc.accept(results));
+    public R action(I input) {
+        return action.tranform(input);
     }
 
 }

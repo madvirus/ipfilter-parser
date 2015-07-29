@@ -7,10 +7,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ChoiceParser extends Parser {
-    private List<Parser> parsers;
+public class ChoiceParser<I,R,T> extends Parser<R,T> {
+    private List<Parser<I,R>> parsers;
 
-    public ChoiceParser(List<Parser> parsers, Consumer<List<String>> actionFunc) {
+    public ChoiceParser(List<Parser<I,R>> parsers, Action actionFunc) {
         super(actionFunc);
         if (parsers == null || parsers.size() == 0) {
             throw new IllegalArgumentException("no parsers");
@@ -18,27 +18,25 @@ public class ChoiceParser extends Parser {
         this.parsers = parsers;
     }
 
-    public ChoiceParser(List<Parser> parsers) {
-        this(parsers, null);
+    public ChoiceParser(List<Parser<I,R>> parsers) {
+        this(parsers, val -> (T)val);
     }
 
     @Override
-    public ParseResult parse(TokenBuffer tokenBuffer) {
+    public ParseResult<T> parse(TokenBuffer tokenBuffer) {
         int pos = tokenBuffer.currentPosition();
-        ParseResult lastResult;
-        Iterator<Parser> parserIter = parsers.iterator();
+        ParseResult<R> lastResult;
+        Iterator<Parser<I,R>> parserIter = parsers.iterator();
         do {
-            Parser parser = parserIter.next();
+            Parser<I,R> parser = parserIter.next();
             lastResult = parser.parse(tokenBuffer);
-            if (lastResult.isSuccess()) {
-                action(Arrays.asList(lastResult.getValue()));
-            }
         } while (parserIter.hasNext() && !lastResult.isSuccess());
         if (lastResult.isSuccess()) {
-            return ParseResult.success(tokenBuffer);
+            T ret = action(lastResult.getValue());
+            return new ParseResult(true, ret, tokenBuffer);
         } else {
             tokenBuffer.resetPosition(pos);
-            return ParseResult.fail(tokenBuffer);
+            return new ParseResult(false, null, tokenBuffer);
         }
     }
 }

@@ -27,12 +27,12 @@ public class ChoiceParserTest {
 
     @Test
     public void allNotMatching_fail() throws Exception {
-        ChoiceParser parser = new ChoiceParser(
+        ChoiceParser<String, String, String> parser = new ChoiceParser(
                 parsers(
                         terminalParser(TokenType.TT_ALLOW),
                         terminalParser(TokenType.TT_DENY),
                         terminalParser(TokenType.TT_IPRANGE)
-                ), null);
+                ));
         TokenBuffer tokenBuffer = tokenBuffer(commaToken());
         int oriPosition = tokenBuffer.currentPosition();
         ParseResult result = parser.parse(tokenBuffer);
@@ -42,7 +42,7 @@ public class ChoiceParserTest {
 
     @Test
     public void someMatching_success() throws Exception {
-        List<Parser> parsers = parsers(
+        List<Parser<String,String>> parsers = parsers(
                 terminalParser(TokenType.TT_DENY),
                 terminalParser(TokenType.TT_ALLOW),
                 terminalParser(TokenType.TT_IPRANGE)
@@ -51,13 +51,12 @@ public class ChoiceParserTest {
         assertSuccess(parsers, denyToken());
         assertSuccess(parsers, iprangeToken("1.2.3.4"));
     }
-
-    private void assertSuccess(List<Parser> parsers, Token token) {
-        List<String> values = new ArrayList<>();
-        ChoiceParser parser = new ChoiceParser(parsers, (val) -> values.addAll(val));
-        ParseResult result = parser.parse(tokenBuffer(token));
+//
+    private void assertSuccess(List<Parser<String,String>> parsers, Token token) {
+        ChoiceParser<String,String,String> parser = new ChoiceParser<>(parsers, val -> val);
+        ParseResult<String> result = parser.parse(tokenBuffer(token));
         assertThat(result.isSuccess(), equalTo(true));
-        assertThat(values.get(0), equalTo(token.getValue()));
+        assertThat(result.getValue(), equalTo(token.getValue()));
     }
 
 }

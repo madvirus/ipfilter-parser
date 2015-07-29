@@ -8,30 +8,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class SequenceParser extends Parser {
+public class SequenceParser<I,R,T> extends Parser<List<R>,T> {
 
-    private List<Parser> parserList;
+    private List<Parser<I,R>> parserList;
 
-    public SequenceParser(List<Parser> parsers, Consumer<List<String>> actionFunc) {
-        super(actionFunc);
+    public SequenceParser(List<Parser<I,R>> parsers, Action<List<R>,T> action) {
+        super(action);
         if (parsers == null || parsers.size() == 0) {
             throw new IllegalArgumentException("no parsers");
         }
         parserList = parsers;
     }
 
-    public SequenceParser(List<Parser> parsers) {
-        this(parsers, null);
-    }
-
     @Override
     public ParseResult parse(TokenBuffer tokenBuffer) {
         int pos = tokenBuffer.currentPosition();
-        Iterator<Parser> parserIter = parserList.iterator();
-        Parser firstParser = parserIter.next();
-        ParseResult lastResult = firstParser.parse(tokenBuffer);
+        Iterator<Parser<I,R>> parserIter = parserList.iterator();
+        Parser<I,R> firstParser = parserIter.next();
+        ParseResult<R> lastResult = firstParser.parse(tokenBuffer);
         if (lastResult.isSuccess()) {
-            List<String> values = new ArrayList<>();
+            List<R> values = new ArrayList<>();
             values.add(lastResult.getValue());
             while (parserIter.hasNext() && lastResult.isSuccess()) {
                 lastResult = parserIter.next().parse(tokenBuffer);
@@ -41,11 +37,11 @@ public class SequenceParser extends Parser {
                     throw new MatchingTokenNotFoundException();
                 }
             }
-            action(values);
-            return new ParseResult(true, "", tokenBuffer);
+            T ret = action(values);
+            return new ParseResult(true, ret, tokenBuffer);
         } else {
             tokenBuffer.resetPosition(pos);
-            return new ParseResult(false, "", tokenBuffer);
+            return new ParseResult(false, null, tokenBuffer);
         }
     }
 }

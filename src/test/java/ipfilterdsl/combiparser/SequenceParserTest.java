@@ -48,6 +48,16 @@ public class SequenceParserTest {
                 tokens(allowToken(), commaToken(), denyToken()));
     }
 
+    private void assertSuccess(List<Parser<String,String>> parsers, List<Token> tokens) {
+        SequenceParser<String, String, String> seqParsers = new SequenceParser(parsers, vals -> vals);
+        ParseResult<List<String>> result = seqParsers.parse(new TokenBuffer(tokens));
+        assertThat(result.isSuccess(), equalTo(true));
+        assertThat(result.getValue().size(), equalTo(tokens.size()));
+        for (int i = 0; i < result.getValue().size(); i++) {
+            assertThat(result.getValue().get(i), equalTo(tokens.get(i).getValue()));
+        }
+    }
+
     @Test
     public void firstTokenNotMatch_then_fail() throws Exception {
         assertFail(
@@ -58,10 +68,12 @@ public class SequenceParserTest {
                 tokens(denyToken(), iprangeToken("1.2.3.4")));
     }
 
-    private void assertFail(List<Parser> parsers, List<Token> tokens) {
-        SequenceParser seqParsers = new SequenceParser(parsers, null);
-        ParseResult result = seqParsers.parse(new TokenBuffer(tokens));
+    private void assertFail(List<Parser<String,String>> parsers, List<Token> tokens) {
+        SequenceParser<String,String,String> seqParsers = new SequenceParser<>(parsers, null);
+        TokenBuffer tokenBuffer = new TokenBuffer(tokens);
+        ParseResult result = seqParsers.parse(tokenBuffer);
         assertThat(result.isSuccess(), equalTo(false));
+        assertThat(tokenBuffer.currentPosition(), equalTo(0));
     }
 
     @Test
@@ -87,8 +99,8 @@ public class SequenceParserTest {
                 ), tokens(allowToken(), commaToken()));
     }
 
-    private void assertMatchingTokenNotFoundExceptionThrown(List<Parser> parsers, List<Token> tokens) {
-        SequenceParser seqParsers = new SequenceParser(parsers, null);
+    private void assertMatchingTokenNotFoundExceptionThrown(List<Parser<String,String>> parsers, List<Token> tokens) {
+        SequenceParser<String,String,String> seqParsers = new SequenceParser<>(parsers, null);
         try {
             seqParsers.parse(new TokenBuffer(tokens));
             fail("exception should thrown");
@@ -96,15 +108,5 @@ public class SequenceParserTest {
         }
     }
 
-    private void assertSuccess(List<Parser> parsers, List<Token> tokens) {
-        List<String> values = new ArrayList<>();
-        SequenceParser seqParsers = new SequenceParser(parsers, (vals) -> values.addAll(vals));
-        ParseResult result = seqParsers.parse(new TokenBuffer(tokens));
-        assertThat(result.isSuccess(), equalTo(true));
-        assertThat(values.size(), equalTo(tokens.size()));
-        for (int i = 0; i < values.size(); i++) {
-            assertThat(values.get(i), equalTo(tokens.get(i).getValue()));
-        }
-    }
 
 }

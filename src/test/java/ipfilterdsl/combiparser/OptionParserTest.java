@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static ipfilterdsl.TokenUtil.allowToken;
 import static ipfilterdsl.TokenUtil.denyToken;
@@ -27,22 +28,20 @@ public class OptionParserTest {
 
     @Test
     public void givenMatchingToken_success() throws Exception {
-        TerminalParser parser = terminalParser(TokenType.TT_ALLOW);
-        List<String> values = new ArrayList<>();
-        OptionParser optParser = new OptionParser(parser, (val) -> values.addAll(val));
-        ParseResult result = optParser.parse(tokenBuffer(allowToken()));
+        TerminalParser<String> parser = terminalParser(TokenType.TT_ALLOW);
+        OptionParser<String,String,String> optParser = new OptionParser<>(parser, val -> val);
+        ParseResult<Optional<String>> result = optParser.parse(tokenBuffer(allowToken()));
         assertThat(result.isSuccess(), equalTo(true));
-        assertThat(values.get(0), equalTo("allow"));
+        assertThat(result.getValue().get(), equalTo("allow"));
     }
 
     @Test
     public void notMatchingToken_success() throws Exception {
-        TerminalParser parser = terminalParser(TokenType.TT_ALLOW);
-        List<String> values = new ArrayList<>();
-        OptionParser optParser = new OptionParser(parser, (val) -> values.addAll(val));
-        ParseResult result = optParser.parse(tokenBuffer(denyToken()));
+        TerminalParser<String> parser = terminalParser(TokenType.TT_ALLOW);
+        OptionParser<String,String,String> optParser = new OptionParser<>(parser, val -> val);
+        ParseResult<Optional<String>> result = optParser.parse(tokenBuffer(denyToken()));
         assertThat(result.isSuccess(), equalTo(true));
-        assertThat(values, hasSize(0));
+        assertThat(result.getValue().isPresent(), equalTo(false));
     }
 
 }
