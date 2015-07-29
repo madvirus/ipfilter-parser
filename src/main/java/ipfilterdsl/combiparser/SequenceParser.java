@@ -10,9 +10,9 @@ import java.util.function.Consumer;
 
 public class SequenceParser<I,R,T> extends Parser<List<R>,T> {
 
-    private List<Parser<I,R>> parserList;
+    private List<? extends Parser<? extends I,? extends R>> parserList;
 
-    public SequenceParser(List<Parser<I,R>> parsers, Action<List<R>,T> action) {
+    public SequenceParser(List<? extends Parser<? extends I,? extends R>> parsers, Action<List<R>,T> action) {
         super(action);
         if (parsers == null || parsers.size() == 0) {
             throw new IllegalArgumentException("no parsers");
@@ -21,10 +21,10 @@ public class SequenceParser<I,R,T> extends Parser<List<R>,T> {
     }
 
     @Override
-    public ParseResult parse(TokenBuffer tokenBuffer) {
+    public ParseResult<T> parse(TokenBuffer tokenBuffer) {
         int pos = tokenBuffer.currentPosition();
-        Iterator<Parser<I,R>> parserIter = parserList.iterator();
-        Parser<I,R> firstParser = parserIter.next();
+        Iterator<? extends Parser<? extends I,? extends R>> parserIter = parserList.iterator();
+        Parser<? extends I,? extends R> firstParser = parserIter.next();
         ParseResult<R> lastResult = firstParser.parse(tokenBuffer);
         if (lastResult.isSuccess()) {
             List<R> values = new ArrayList<>();

@@ -49,7 +49,8 @@ public class SequenceParserTest {
     }
 
     private void assertSuccess(List<Parser<String,String>> parsers, List<Token> tokens) {
-        SequenceParser<String, String, String> seqParsers = new SequenceParser(parsers, vals -> vals);
+        SequenceParser<String, String, List<String>> seqParsers =
+                new SequenceParser<>(parsers, vals -> vals);
         ParseResult<List<String>> result = seqParsers.parse(new TokenBuffer(tokens));
         assertThat(result.isSuccess(), equalTo(true));
         assertThat(result.getValue().size(), equalTo(tokens.size()));
@@ -100,7 +101,7 @@ public class SequenceParserTest {
     }
 
     private void assertMatchingTokenNotFoundExceptionThrown(List<Parser<String,String>> parsers, List<Token> tokens) {
-        SequenceParser<String,String,String> seqParsers = new SequenceParser<>(parsers, null);
+        SequenceParser<String,String,String> seqParsers = new SequenceParser<String, String, String>(parsers, null);
         try {
             seqParsers.parse(new TokenBuffer(tokens));
             fail("exception should thrown");
