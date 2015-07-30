@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class RepetitionParser<I,R,T> extends Parser<List<R>,T> {
-    private final boolean oneOrMore;
+    private boolean oneOrMore;
     private Parser<I,R> parser;
 
-    public RepetitionParser(boolean oneOrMore, Parser parser, Action<List<R>, T> action) {
+    public RepetitionParser(boolean oneOrMore, Parser<I,R> parser, Action<List<R>, T> action) {
         super(action);
         if (parser == null) {
             throw new IllegalArgumentException("no parser");

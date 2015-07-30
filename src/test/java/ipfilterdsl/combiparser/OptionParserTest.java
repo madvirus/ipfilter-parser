@@ -20,7 +20,7 @@ public class OptionParserTest {
     @Test
     public void noParsers() throws Exception {
         try {
-            new OptionParser(null, null);
+            new OptionParser(null);
             fail("exception should be thrown with no parser");
         } catch (IllegalArgumentException e) {
         }
@@ -29,7 +29,7 @@ public class OptionParserTest {
     @Test
     public void givenMatchingToken_success() throws Exception {
         TerminalParser<String> parser = terminalParser(TokenType.TT_ALLOW);
-        OptionParser<String,String,String> optParser = new OptionParser<>(parser, val -> val);
+        OptionParser<String,String> optParser = new OptionParser<>(parser);
         ParseResult<Optional<String>> result = optParser.parse(tokenBuffer(allowToken()));
         assertThat(result.isSuccess(), equalTo(true));
         assertThat(result.getValue().get(), equalTo("allow"));
@@ -38,7 +38,7 @@ public class OptionParserTest {
     @Test
     public void notMatchingToken_success() throws Exception {
         TerminalParser<String> parser = terminalParser(TokenType.TT_ALLOW);
-        OptionParser<String,String,String> optParser = new OptionParser<>(parser, val -> val);
+        OptionParser<String,String> optParser = new OptionParser<>(parser);
         ParseResult<Optional<String>> result = optParser.parse(tokenBuffer(denyToken()));
         assertThat(result.isSuccess(), equalTo(true));
         assertThat(result.getValue().isPresent(), equalTo(false));

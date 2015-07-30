@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class OptionParser<I,R,T> extends Parser<R,T> {
+public class OptionParser<I,R> extends Parser<I,Optional<R>> {
     private Parser parser;
 
-    public OptionParser(Parser<I,R> parser, Action<R,T> action) {
-        super(action);
+    public OptionParser(Parser<I,R> parser) {
+        super(null);
         if (parser == null)
             throw new IllegalArgumentException();
 
@@ -19,12 +19,11 @@ public class OptionParser<I,R,T> extends Parser<R,T> {
     }
 
     @Override
-    public ParseResult<Optional<T>> parse(TokenBuffer tokenBuffer) {
+    public ParseResult<Optional<R>> parse(TokenBuffer tokenBuffer) {
         int pos = tokenBuffer.currentPosition();
         ParseResult<R> result = parser.parse(tokenBuffer);
         if (result.isSuccess()) {
-            T ret = action(result.getValue());
-            return new ParseResult(true, Optional.ofNullable(ret), tokenBuffer);
+            return new ParseResult(true, Optional.ofNullable(result.getValue()), tokenBuffer);
         } else {
             tokenBuffer.resetPosition(pos);
         }

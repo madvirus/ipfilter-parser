@@ -10,11 +10,11 @@ public abstract class Parser<I,R> {
 
     private Action<I,R> action = null;
 
-    public Parser(Action<I,R> actionFunc) {
-        this.action = actionFunc;
+    public Parser(Action<I,R> action) {
+        this.action = action;
     }
 
-    public abstract ParseResult parse(TokenBuffer tokenBuffer);
+    public abstract ParseResult<R> parse(TokenBuffer tokenBuffer);
 
     public R action(I input) {
         return action.tranform(input);

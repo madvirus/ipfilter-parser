@@ -10,12 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-class IpFilterCombiParser {
-    private TokenBuffer tokenBuffer;
-
-    private Exception occuredException;
-    private IpFilter result;
-    //
+public class IpFilterCombiParser {
     // termianl
     private TerminalParser<String> allowParser = new TerminalParser<>(TokenType.TT_ALLOW, v -> v);
     private TerminalParser<String> denyParser = new TerminalParser<>(TokenType.TT_DENY, v -> v);
@@ -61,8 +56,9 @@ class IpFilterCombiParser {
             new SequenceParser<>(Arrays.asList(orderParser, orderChoice), vals -> (Boolean)vals.get(1));
 
 
-    private OptionParser<List<Object>, Boolean, Boolean> orderDeclOpt = new OptionParser<>(orderDecl, v -> v);
+    private OptionParser<List<Object>, Boolean> orderDeclOpt = new OptionParser<>(orderDecl);
 
+    // config : allowOrDeny* orderDecl?;
     private SequenceParser<Object, Object, IpFilter> configParser =
             new SequenceParser<>(
                     Arrays.asList(allowOrDenyList, orderDeclOpt),
@@ -80,6 +76,11 @@ class IpFilterCombiParser {
                         filter.setAllowFirst(allowFirstOpt.orElse(true));
                         return filter;
                     });
+
+    private TokenBuffer tokenBuffer;
+
+    private Exception occuredException;
+    private IpFilter result;
 
     public IpFilterCombiParser(TokenBuffer tokenBuffer) {
         this.tokenBuffer = tokenBuffer;
@@ -104,6 +105,9 @@ class IpFilterCombiParser {
         return Optional.ofNullable(result);
     }
 
+    public boolean isSuccess() {
+        return !isFailed();
+    }
     public boolean isFailed() {
         return occuredException != null;
     }

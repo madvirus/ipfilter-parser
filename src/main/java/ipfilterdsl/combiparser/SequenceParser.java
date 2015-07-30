@@ -25,7 +25,7 @@ public class SequenceParser<I,R,T> extends Parser<List<R>,T> {
         int pos = tokenBuffer.currentPosition();
         Iterator<? extends Parser<? extends I,? extends R>> parserIter = parserList.iterator();
         Parser<? extends I,? extends R> firstParser = parserIter.next();
-        ParseResult<R> lastResult = firstParser.parse(tokenBuffer);
+        ParseResult<? extends R> lastResult = firstParser.parse(tokenBuffer);
         if (lastResult.isSuccess()) {
             List<R> values = new ArrayList<>();
             values.add(lastResult.getValue());
